@@ -58,12 +58,6 @@ Window {
                 Component {id: mainScreen;Screen01 {}}
         }
         }
-        Behavior on contentY {
-                       NumberAnimation {
-                           duration: 150
-                           easing.type: Easing.InOutQuad
-                       }
-                   }
     }
 
     InputPanel {
@@ -72,19 +66,10 @@ Window {
         y: showKeyboard ? parent.height - height : parent.height
         Behavior on y {
             NumberAnimation {
-                duration: 150
+                duration: 200
                 easing.type: Easing.InOutQuad
             }
         }
-        Timer { // flicker'ın Kapanışında oluşan titremeyi engellemek için eklendi.
-                   id: delayKeyBoardFlicker
-                   interval: 150 // 2000 milisaniye (2 saniye) gecikme
-                   onTriggered: {
-                       // Gecikme sona erdiğinde gerçekleşecek işlemler
-                       flickableLogin.anchors.bottomMargin=0; // klavye açıldığında boyutu
-
-                   }
-               }
         //anchors.leftMargin: Constants.height/10
         //anchors.rightMargin: Constants.width/10
         anchors.left: parent.left
@@ -96,32 +81,23 @@ Window {
             {   console.log(mauseArea.mouseY)
 
                 flickableLogin.anchors.bottomMargin=inputPanel.height; // klavye açıldığında boyutu
+                var focusedItem = Qt.inputMethod.focusedItem;
                 flickableLogin.interactive= true;
                 //flickableLogin.contentY = (Constants.height-inputPanel.height); // İstediğiniz miktarı ayarlayabilirsiniz
                 //flickableLogin.contentY=activeFocusItem.y;
                 //flickableLogin.contentY=(activeFocusItem.y<(Constants.height-inputPanel.height)/2) ? 0: 0;
                // console.log("Cons-input : ",(Constants.height-inputPanel.height));
-                //flickableLogin.contentY = Math.max(0, activeFocusItem.y - ((flickableLogin.height-inputPanel.height) - activeFocusItem.height) / 2);
-                //flickableLogin.contentY = Math.max(0, Math.min(activeFocusItem.y - (flickableLogin.height - activeFocusItem.height) / 2,  Constants.height-(flickableLogin.height - inputPanel.height)));
-                //flickableLogin.contentY = Math.max(0, Math.min(activeFocusItem.y - (flickableLogin.height - activeFocusItem.height) / 2, Constants.height - flickableLogin.height + inputPanel.height));
-                flickableLogin.contentY = Math.max(0, Math.min(activeFocusItem.y - (flickableLogin.height - activeFocusItem.height) / 2, Constants.height - flickableLogin.height));
-
-                // Eğer klavye açıldığında sayfanın altı ekrandan taşıyorsa, sayfayı yukarı kaydır
-                if (flickableLogin.height + flickableLogin.contentY > Constants.height) {
-                    flickableLogin.contentY = Constants.height - flickableLogin.height;
-                }
+                //flickableLogin.contentY = Math.max(0, activeFocusItem.y - (flickableLogin.height - activeFocusItem.height) / 2);
+                flickableLogin.contentY = Math.max(0, Math.min(activeFocusItem.y - (flickableLogin.height - activeFocusItem.height) / 2, flickableLogin.height - inputPanel.height);
 
                 console.log("Klavye aktif.");
                 console.log(showKeyboard);
             }
             else if(!showKeyboard)
             {
-                flickableLogin.interactive= false;
-                //flickableLogin.anchors.bottomMargin=0; // klavye açıldığında boyutu
-
                 flickableLogin.contentY = 0; // İçeriği en üst konuma alır
-                delayKeyBoardFlicker.start(); // Timer'ı başlat ve gecikmeyi başlat
-
+                flickableLogin.anchors.bottomMargin=0; // klavye açıldığında boyutu
+                flickableLogin.interactive= false;
                 console.log("Klavye pasif.");
 
                 console.log(showKeyboard);
